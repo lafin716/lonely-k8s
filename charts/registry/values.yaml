@@ -56,7 +56,7 @@ registry:
   # 환경 변수 설정
   env:
     - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
-      value: "/var/lib/registry"
+      value: "/Users/mini/Documents/storage/infra"
     - name: REGISTRY_HTTP_ADDR
       value: ":5000"
     - name: REGISTRY_LOG_LEVEL

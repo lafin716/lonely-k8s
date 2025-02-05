@@ -46,13 +46,13 @@ spec:
             {{- end }}
           volumeMounts:
             - name: storage
-              mountPath: /var/lib/registry
+              mountPath: /Users/mini/Documents/storage/infra/registry
               subPath: registry-data
             - name: logs
               mountPath: /Users/mini/Documents/logs/infra/registry
             {{- if .Values.registry.auth.enabled }}
             - name: auth
-              mountPath: /auth
+              mountPath: /Users/mini/Documents/storage/infra/auth
               readOnly: true
             {{- end }}
           resources:
