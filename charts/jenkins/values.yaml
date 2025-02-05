@@ -6,6 +6,22 @@ jenkins:
     tag: "2.426.1-lts"
     imagePullPolicy: IfNotPresent
 
+    # 종료 메시지 설정
+    terminationMessagePath: /logs/infra/jenkins/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+
+    # 추가 볼륨 마운트
+    extraVolumeMounts:
+      - name: logs
+        mountPath: /logs/infra/jenkins
+    
+    # 추가 볼륨
+    extraVolumes:
+      - name: logs
+        hostPath:
+          path: /logs/infra/jenkins
+          type: DirectoryOrCreate
+
     # 관리자 계정 설정
     adminUser: "admin"
     adminPassword: "admin123"  # 실제 배포 시 반드시 변경
@@ -133,6 +149,23 @@ jenkins:
     componentName: "jenkins-agent"
     image: "jenkins/inbound-agent"
     tag: "3107.v665000b_51092-5"
+    
+    # 에이전트 종료 메시지 설정
+    terminationMessagePath: /logs/infra/jenkins-agent/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+
+    # 에이전트 추가 볼륨 마운트
+    extraVolumeMounts:
+      - name: agent-logs
+        mountPath: /logs/infra/jenkins-agent
+
+    # 에이전트 추가 볼륨
+    extraVolumes:
+      - name: agent-logs
+        hostPath:
+          path: /logs/infra/jenkins-agent
+          type: DirectoryOrCreate
+
     resources:
       requests:
         cpu: "500m"
