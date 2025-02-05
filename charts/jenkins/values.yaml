@@ -30,9 +30,28 @@ jenkins:
       storageClass: "standard"
       size: "10Gi"
       accessMode: "ReadWriteOnce"
+      annotations: {}
 
     # 시스템 메시지
     systemMessage: "Jenkins on Kubernetes"
+
+    # 초기화 설정
+    initContainerEnv:
+      - name: JENKINS_HOME
+        value: /var/jenkins_home
+    
+    # 컨테이너 설정
+    containerEnv:
+      - name: JENKINS_OPTS
+        value: "--prefix=/jenkins"
+      - name: JAVA_OPTS
+        value: >-
+          -Xmx2g
+          -Xms512m
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -Djenkins.install.runSetupWizard=false
+          -Dhudson.model.DirectoryBrowserSupport.CSP="sandbox allow-scripts; default-src 'self'; style-src 'self' 'unsafe-inline';"
 
     # 초기 플러그인 설치
     installPlugins:
@@ -56,6 +75,26 @@ jenkins:
         cpu: "2000m"
         memory: "4Gi"
 
+    # 프로브 설정
+    livenessProbe:
+      failureThreshold: 5
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    readinessProbe:
+      failureThreshold: 3
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+
+    # 보안 설정
+    securityContext:
+      runAsUser: 1000
+      fsGroup: 1000
+      allowPrivilegeEscalation: false
+
     # JCasC 설정
     JCasC:
       defaultConfig: true
@@ -63,6 +102,14 @@ jenkins:
         welcome-message: |
           jenkins:
             systemMessage: Welcome to Jenkins on Kubernetes!
+            numExecutors: 0
+            mode: EXCLUSIVE
+            securityRealm:
+              local:
+                allowsSignup: false
+                users:
+                  - id: "${adminUser}"
+                    password: "${adminPassword}"
         cloud-config: |
           jenkins:
             clouds:
@@ -76,6 +123,9 @@ jenkins:
                     - key: "jenkins/jenkins-controller"
                       value: "true"
                   containerCapStr: "10"
+                  podRetention: "never"
+                  maxRequestsPerHostStr: "32"
+                  waitForPodSec: "60"
 
   # 에이전트 설정
   agent:
@@ -89,4 +139,21 @@ jenkins:
         memory: "512Mi"
       limits:
         cpu: "1000m"
-        memory: "1Gi" 
+        memory: "1Gi"
+    
+    # 에이전트 보안 설정
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+
+  # 네트워크 정책
+  networkPolicy:
+    enabled: true
+    apiVersion: networking.k8s.io/v1
+    internalAgents:
+      allowed: true
+      podLabels:
+        jenkins/jenkins-agent: "true"
+    externalAgents:
+      enabled: false 

@@ -17,6 +17,10 @@ spec:
         app: registry
         release: {{ .Release.Name }}
     spec:
+      {{- if .Values.registry.initContainers }}
+      initContainers:
+        {{- toYaml .Values.registry.initContainers | nindent 8 }}
+      {{- end }}
       containers:
         - name: registry
           image: "{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}"
@@ -25,6 +29,9 @@ spec:
             - containerPort: 5000
               protocol: TCP
           env:
+            {{- if .Values.registry.env }}
+            {{- toYaml .Values.registry.env | nindent 12 }}
+            {{- end }}
             {{- if .Values.registry.auth.enabled }}
             - name: REGISTRY_AUTH
               value: "htpasswd"
@@ -47,14 +54,18 @@ spec:
             httpGet:
               path: /
               port: 5000
-            initialDelaySeconds: 10
-            periodSeconds: 30
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
       {{- if .Values.registry.securityContext.enabled }}
       securityContext:
         runAsUser: {{ .Values.registry.securityContext.runAsUser }}
