@@ -67,16 +67,3 @@ registry:
       value: "mysecret"  # 실제 배포 시 변경 필요
     - name: REGISTRY_HTTP_DEBUG_ADDR
       value: ":5001"  # 디버그 엔드포인트
-
-  # 초기화 컨테이너 설정
-  initContainers:
-    - name: init-registry
-      image: busybox
-      command: ['sh', '-c', 'mkdir -p /var/lib/registry /Users/mini/Documents/logs/infra/registry && chmod -R 777 /var/lib/registry /Users/mini/Documents/logs/infra/registry']
-      volumeMounts:
-        - name: storage
-          mountPath: /var/lib/registry
-        - name: logs
-          mountPath: /Users/mini/Documents/logs/infra/registry
-      securityContext:
-        runAsUser: 0 
