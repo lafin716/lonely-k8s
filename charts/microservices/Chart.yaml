@@ -1,0 +1,16 @@
+apiVersion: v2
+name: microservices
+description: A Helm chart for Spring Boot and PostgreSQL Microservices
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+maintainers:
+  - name: lonely-k8s
+    email: admin@lonely-k8s.local
+
+dependencies:
+  - name: postgresql
+    version: 13.2.24
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled 

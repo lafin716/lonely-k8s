@@ -1,0 +1,86 @@
+# Jenkins 설정
+jenkins:
+  controller:
+    # Jenkins 이미지 설정
+    image: "jenkins/jenkins"
+    tag: "2.426.1-lts"
+    imagePullPolicy: IfNotPresent
+
+    # 관리자 계정 설정
+    adminUser: "admin"
+    adminPassword: "admin123"  # 실제 배포 시 반드시 변경
+
+    # 인그레스 설정
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hostName: jenkins.local
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+
+    # 영구 볼륨 설정
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: "10Gi"
+      accessMode: "ReadWriteOnce"
+
+    # 시스템 메시지
+    systemMessage: "Jenkins on Kubernetes"
+
+    # 초기 플러그인 설치
+    installPlugins:
+      - kubernetes:4148.v47a_66d95a_1d0
+      - workflow-aggregator:596.v8c21c963d92d
+      - git:5.2.1
+      - configuration-as-code:1775.v810dc950b_514
+      - docker-workflow:572.v950f58993843
+      - docker-plugin:1.5
+      - kubernetes-cli:1.12.1
+      - job-dsl:1.87
+      - pipeline-utility-steps:2.16.1
+      - blueocean:1.27.7
+
+    # 리소스 제한
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "2000m"
+        memory: "4Gi"
+
+    # JCasC 설정
+    JCasC:
+      defaultConfig: true
+      configScripts:
+        welcome-message: |
+          jenkins:
+            systemMessage: Welcome to Jenkins on Kubernetes!
+        cloud-config: |
+          jenkins:
+            clouds:
+              - kubernetes:
+                  name: "kubernetes"
+                  serverUrl: "https://kubernetes.default"
+                  namespace: "${POD_NAMESPACE}"
+                  jenkinsUrl: "http://jenkins-controller:8080"
+                  jenkinsTunnel: "jenkins-agent:50000"
+                  podLabels:
+                    - key: "jenkins/jenkins-controller"
+                      value: "true"
+                  containerCapStr: "10"
+
+  # 에이전트 설정
+  agent:
+    enabled: true
+    componentName: "jenkins-agent"
+    image: "jenkins/inbound-agent"
+    tag: "3107.v665000b_51092-5"
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi" 

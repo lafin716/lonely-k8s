@@ -1,0 +1,53 @@
+{{- if .Values.springboot.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-springboot
+  labels:
+    app: springboot
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.springboot.replicaCount }}
+  selector:
+    matchLabels:
+      app: springboot
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: springboot
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: springboot
+          image: "{{ .Values.springboot.image.repository }}:{{ .Values.springboot.image.tag }}"
+          imagePullPolicy: {{ .Values.springboot.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- range .Values.springboot.env }}
+            - name: {{ .name }}
+              {{- if .value }}
+              value: {{ .value | quote }}
+              {{- else if .valueFrom }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 16 }}
+              {{- end }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.springboot.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+{{- end }} 

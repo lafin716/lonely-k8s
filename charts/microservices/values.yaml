@@ -1,0 +1,71 @@
+# Spring Boot 애플리케이션 설정
+springboot:
+  enabled: true
+  image:
+    repository: localhost:5000/spring-app
+    tag: latest
+    pullPolicy: Always
+  
+  # 서비스 설정
+  service:
+    type: ClusterIP
+    port: 8080
+  
+  # 인그레스 설정
+  ingress:
+    enabled: true
+    className: nginx
+    annotations: {}
+    hosts:
+      - host: api.local
+        paths:
+          - path: /
+            pathType: Prefix
+  
+  # 리소스 제한
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  # 환경 변수
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: "prod"
+    - name: SPRING_DATASOURCE_URL
+      value: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/myapp"
+    - name: SPRING_DATASOURCE_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Release.Name }}-postgresql
+          key: postgres-password
+  
+  # 레플리카 수
+  replicaCount: 1
+
+# PostgreSQL 설정
+postgresql:
+  enabled: true
+  auth:
+    username: postgres
+    password: postgres123  # 실제 배포 시 반드시 변경
+    database: myapp
+  
+  # 영구 볼륨 설정
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: 8Gi
+    
+    # 리소스 제한
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi 

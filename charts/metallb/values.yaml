@@ -1,0 +1,39 @@
+# MetalLB 설정
+metallb:
+  # 컨트롤러 설정
+  controller:
+    image:
+      repository: quay.io/metallb/controller
+      tag: v0.13.12
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 100m
+        memory: 100Mi
+
+  # 스피커 설정
+  speaker:
+    image:
+      repository: quay.io/metallb/speaker
+      tag: v0.13.12
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 100m
+        memory: 100Mi
+
+  # Layer 2 설정
+  configInline:
+    address-pools:
+      - name: default
+        protocol: layer2
+        addresses:
+          - 192.168.49.200-192.168.49.240  # Minikube의 IP 범위에 맞게 조정
+
+  # 로깅 설정
+  logging:
+    level: info 

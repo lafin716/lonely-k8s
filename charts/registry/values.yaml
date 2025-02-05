@@ -1,0 +1,53 @@
+# Docker Registry 설정
+registry:
+  image:
+    repository: registry
+    tag: 2.8.1
+    pullPolicy: IfNotPresent
+  
+  # 기본 인증 설정
+  auth:
+    enabled: true
+    username: admin
+    # 실제 배포 시에는 반드시 변경해야 함
+    password: admin123
+
+  # 스토리지 설정
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+  # 서비스 설정
+  service:
+    type: ClusterIP
+    port: 5000
+
+  # 인그레스 설정
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    hosts:
+      - host: registry.local
+        paths:
+          - path: /
+            pathType: Prefix
+
+  # 리소스 제한
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # 보안 설정
+  securityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000 

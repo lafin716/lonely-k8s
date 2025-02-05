@@ -1,0 +1,15 @@
+apiVersion: v2
+name: metallb
+description: A Helm chart for MetalLB Load Balancer
+type: application
+version: 0.1.0
+appVersion: "0.13.12"
+
+maintainers:
+  - name: lonely-k8s
+    email: admin@lonely-k8s.local
+
+dependencies:
+  - name: metallb
+    version: 0.13.12
+    repository: https://metallb.github.io/metallb 

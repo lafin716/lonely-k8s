@@ -1,0 +1,10 @@
+apiVersion: v2
+name: registry
+description: A Helm chart for Docker Registry
+type: application
+version: 0.1.0
+appVersion: "2.8.1"
+
+maintainers:
+  - name: lonely-k8s
+    email: admin@lonely-k8s.local 

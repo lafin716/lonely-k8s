@@ -1,0 +1,30 @@
+{{- if .Values.registry.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-registry
+  labels:
+    app: registry
+    release: {{ .Release.Name }}
+  {{- with .Values.registry.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.registry.ingress.className }}
+  rules:
+    {{- range .Values.registry.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $.Release.Name }}-registry
+                port:
+                  number: {{ $.Values.registry.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }} 
