@@ -7,19 +7,19 @@ jenkins:
     imagePullPolicy: IfNotPresent
 
     # 종료 메시지 설정
-    terminationMessagePath: /logs/infra/jenkins/termination-log
+    terminationMessagePath: /Users/mini/Documents/logs/infra/jenkins/termination-log
     terminationMessagePolicy: FallbackToLogsOnError
 
     # 추가 볼륨 마운트
     extraVolumeMounts:
       - name: logs
-        mountPath: /logs/infra/jenkins
+        mountPath: /Users/mini/Documents/logs/infra/jenkins
     
     # 추가 볼륨
     extraVolumes:
       - name: logs
         hostPath:
-          path: /logs/infra/jenkins
+          path: /Users/mini/Documents/logs/infra/jenkins
           type: DirectoryOrCreate
 
     # 관리자 계정 설정
@@ -151,19 +151,19 @@ jenkins:
     tag: "3107.v665000b_51092-5"
     
     # 에이전트 종료 메시지 설정
-    terminationMessagePath: /logs/infra/jenkins-agent/termination-log
+    terminationMessagePath: /Users/mini/Documents/logs/infra/jenkins-agent/termination-log
     terminationMessagePolicy: FallbackToLogsOnError
 
     # 에이전트 추가 볼륨 마운트
     extraVolumeMounts:
       - name: agent-logs
-        mountPath: /logs/infra/jenkins-agent
+        mountPath: /Users/mini/Documents/logs/infra/jenkins-agent
 
     # 에이전트 추가 볼륨
     extraVolumes:
       - name: agent-logs
         hostPath:
-          path: /logs/infra/jenkins-agent
+          path: /Users/mini/Documents/logs/infra/jenkins-agent
           type: DirectoryOrCreate
 
     resources:
