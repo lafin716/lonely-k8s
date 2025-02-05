@@ -16,6 +16,8 @@ spec:
       labels:
         app: registry
         release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
       {{- if .Values.registry.initContainers }}
       initContainers:
@@ -30,6 +32,10 @@ spec:
           ports:
             - containerPort: 5000
               protocol: TCP
+              name: registry
+            - containerPort: 5001
+              protocol: TCP
+              name: debug
           env:
             {{- if .Values.registry.env }}
             {{- toYaml .Values.registry.env | nindent 12 }}
@@ -45,6 +51,7 @@ spec:
           volumeMounts:
             - name: storage
               mountPath: /var/lib/registry
+              subPath: registry-data
             - name: logs
               mountPath: /Users/mini/Documents/logs/infra/registry
             {{- if .Values.registry.auth.enabled }}
@@ -57,7 +64,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 5000
+              port: registry
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -65,7 +72,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 5000
+              port: registry
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
@@ -92,4 +99,5 @@ spec:
         - name: auth
           secret:
             secretName: {{ .Release.Name }}-registry-auth
+            defaultMode: 0444
         {{- end }} 

@@ -49,9 +49,9 @@ registry:
   # 보안 설정
   securityContext:
     enabled: true
-    runAsUser: 1000
-    runAsGroup: 1000
-    fsGroup: 1000
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
   # 환경 변수 설정
   env:
@@ -63,14 +63,20 @@ registry:
       value: "debug"  # 문제 해결을 위해 로그 레벨을 debug로 설정
     - name: REGISTRY_STORAGE_DELETE_ENABLED
       value: "true"
+    - name: REGISTRY_HTTP_SECRET
+      value: "mysecret"  # 실제 배포 시 변경 필요
+    - name: REGISTRY_HTTP_DEBUG_ADDR
+      value: ":5001"  # 디버그 엔드포인트
 
   # 초기화 컨테이너 설정
   initContainers:
     - name: init-registry
       image: busybox
-      command: ['sh', '-c', 'mkdir -p /var/lib/registry && chown -R 1000:1000 /var/lib/registry']
+      command: ['sh', '-c', 'mkdir -p /var/lib/registry /Users/mini/Documents/logs/infra/registry && chmod -R 777 /var/lib/registry /Users/mini/Documents/logs/infra/registry']
       volumeMounts:
         - name: storage
           mountPath: /var/lib/registry
+        - name: logs
+          mountPath: /Users/mini/Documents/logs/infra/registry
       securityContext:
         runAsUser: 0 
