@@ -25,7 +25,7 @@ spec:
         - name: registry
           image: "{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}"
           imagePullPolicy: {{ .Values.registry.image.pullPolicy }}
-          terminationMessagePath: /logs/infra/registry/termination-log
+          terminationMessagePath: /Users/mini/Documents/logs/infra/registry/termination-log
           terminationMessagePolicy: FallbackToLogsOnError
           ports:
             - containerPort: 5000
@@ -46,7 +46,7 @@ spec:
             - name: storage
               mountPath: /var/lib/registry
             - name: logs
-              mountPath: /logs/infra/registry
+              mountPath: /Users/mini/Documents/logs/infra/registry
             {{- if .Values.registry.auth.enabled }}
             - name: auth
               mountPath: /auth
@@ -86,7 +86,7 @@ spec:
           {{- end }}
         - name: logs
           hostPath:
-            path: /logs/infra/registry
+            path: /Users/mini/Documents/logs/infra/registry
             type: DirectoryOrCreate
         {{- if .Values.registry.auth.enabled }}
         - name: auth
