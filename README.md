@@ -63,6 +63,7 @@ helm install microservices ./charts/microservices
 
 기본 접속 정보:
 - URL: http://registry.local
+- NodePort URL: http://<노드IP>:30500
 - 사용자: admin
 - 비밀번호: admin123 (보안을 위해 변경 필요)
 
@@ -76,6 +77,7 @@ helm upgrade registry ./charts/registry --set registry.auth.password=새로운�
 
 기본 접속 정보:
 - URL: http://jenkins.local
+- NodePort URL: http://<노드IP>:30800
 - 사용자: admin
 - 비밀번호: admin123 (보안을 위해 변경 필요)
 
@@ -135,6 +137,9 @@ PostgreSQL 데이터베이스:
 # 전체 리소스 상태 확인
 kubectl get all
 
+# NodePort 확인
+kubectl get svc
+
 # 개별 서비스 로그 확인
 kubectl logs -f deployment/lonely-k8s-registry
 kubectl logs -f deployment/lonely-k8s-jenkins
@@ -165,6 +170,7 @@ kubectl get ingress
 3. PostgreSQL 비밀번호
 4. 모든 서비스의 인그레스에 HTTPS 적용
 5. 리소스 제한 값 조정
+6. NodePort 접근 제한 설정 (필요한 경우 방화벽 설정)
 
 ## 업그레이드 및 롤백
 

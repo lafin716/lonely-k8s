@@ -21,8 +21,9 @@ registry:
 
   # 서비스 설정
   service:
-    type: ClusterIP
+    type: NodePort
     port: 5000
+    nodePort: 30500  # 30000-32767 범위 내에서 설정
 
   # 인그레스 설정
   ingress:

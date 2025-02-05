@@ -10,6 +10,12 @@ jenkins:
     adminUser: "admin"
     adminPassword: "admin123"  # 실제 배포 시 반드시 변경
 
+    # 서비스 설정
+    serviceType: NodePort
+    servicePort: 8080
+    targetPort: 8080
+    nodePort: 30800
+
     # 인그레스 설정
     ingress:
       enabled: true
